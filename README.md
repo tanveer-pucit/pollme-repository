@@ -3,4 +3,4 @@ My Djnago work with github
 
 
 
-Tnaveer Somthing...........
+Tnaveer Somthing........... i am done..
