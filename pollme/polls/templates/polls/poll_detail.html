@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+
+<p>{{ poll }} --- {{ poll.total_num_of_votes }} votes</p>
+
+
+<form action="{% url 'polls:polls_vote_save_view' poll.id %}" method="post">
+    {% csrf_token %}
+
+    {% for choice in poll.choice_set.all %}
+
+    <input type="radio"
+           name="choice"
+           id="choice{{ forloop.counter }}"
+           value="{{ choice.id }}"/>
+
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} --- {{ choice.total_num_of_votes_for_this_choice }}</label>
+    <br/>
+    {% endfor %}
+
+    <input type="submit" class="btn btn-primary mb-2" value="vote" {% if not user_can_vote %} disabled {% endif %}/>
+
+</form>
+
+    {% if not user_can_vote %}
+        {% for choice_dic in results %}
+            <div class="row">
+                <div class="col-sm-6">
+
+                    {{choice_dic.text}}
+                    <div class="progress mb-2">
+                        <div class="progress-bar" role="progressbar" style="width: {{ choice_dic.percentage }}%;">{{ choice_dic.total_votes }}%</div>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Vote to see results!</p>
+    {% endif %}
+</div>
+{% endblock %}

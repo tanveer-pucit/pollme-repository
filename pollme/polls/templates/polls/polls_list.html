@@ -1,18 +1,49 @@
 {% extends 'base.html' %}
 
+
+
 {% block content %}
 <div class="container">
-    <h1> welcome to polls_list</h1>
-    <ui>
-        {% for poll in polls %}
-        <li>{{ poll }}</li>
-            <ui>
-                {% for choice in poll.choice_set.all %}
-                    <li>{{ choice.choice_text }}</li>
+
+    {% if request.user.is_authenticated %}
+    <h6> Logged In as: {{ request.user }}</h6>
+    {% else %}
+    <h2> Not logged in! </h2>
+    {% endif %}
+
+    <h1 class="text-center"> welcome to polls list!</h1>
+
+    <div class="row">
+
+        <div class="col-sm-8 offset-sm-2">
+
+            {% if messages %}
+                    {% for message in messages %}
+                        <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                            {{message}}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+            {% endif %}
+            <a href="{% url 'polls:add' %}" class="btn btn-primary" style="margin-bottom: 5px">Add <i class="fas fa-plus"></i></a>
+             <ul class="list-group">
+                {% for poll in polls %}
+                 <li class="list-group-item">
+                     <a href="{% url 'polls:polls_detail_view' poll.id %}"> {{ poll }}</a>
+
+                         {% if request.user == poll.owner %}
+                            <a href="{% url 'polls:edit_poll' poll.id %}" class='float-right'><i class="fas fa-pencil-alt"></i></a>
+                         {% endif %}
+                 </li>
                 {% endfor %}
-            </ui>
-        {% endfor %}
-    </ui>
+             </ul>
+
+        </div>
+
+    </div>
+
 </div>
 
 
